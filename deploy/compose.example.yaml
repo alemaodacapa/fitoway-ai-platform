@@ -1,0 +1,33 @@
+# DOCUMENTATION EXAMPLE ONLY — DO NOT APPLY TO THE EXISTING VPS.
+# This is not an export of /docker/open-webui/docker-compose.yml.
+# Verify actual values and back up before preparing a production deployment.
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - .env
+    environment:
+      WEBUI_URL: "${WEBUI_URL:-https://fitoway.tech}"
+      # Set explicitly after checking production policies:
+      # CORS_ALLOW_ORIGIN: "https://fitoway.tech"
+      # ENABLE_SIGNUP: "false"
+    volumes:
+      - open_webui_data:/app/backend/data
+    networks:
+      - postgres_network
+
+volumes:
+  # Existing production volume name was observed as open-webui_open_webui_data.
+  # External declaration avoids silently creating a different empty volume.
+  open_webui_data:
+    external: true
+    name: open-webui_open_webui_data
+
+networks:
+  postgres_network:
+    external: true
+    name: postgresql-mvlp_default
