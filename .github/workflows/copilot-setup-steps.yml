@@ -1,0 +1,33 @@
+# Prepara o ambiente do GitHub Copilot Coding Agent.
+# Não executa deploy e não utiliza credenciais da VPS.
+name: Copilot Setup Steps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/copilot-setup-steps.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/copilot-setup-steps.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Preparar variáveis de exemplo
+        run: cp .env.example .env
+
+      - name: Verificar configuração Docker Compose
+        run: docker compose -f compose.yaml config --quiet
+
+      - name: Exibir serviços disponíveis
+        run: docker compose -f compose.yaml config --services
