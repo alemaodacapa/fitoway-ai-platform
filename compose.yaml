@@ -1,0 +1,37 @@
+# Fitoway AI Platform — clean standalone installation.
+# This file does NOT use production volumes, networks or credentials.
+name: fitoway-ai-platform
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:${OPEN_WEBUI_TAG:-main}
+    restart: unless-stopped
+    ports:
+      - "${WEBUI_BIND_ADDRESS:-127.0.0.1}:${WEBUI_PORT:-3000}:8080"
+    environment:
+      WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY:?Set WEBUI_SECRET_KEY in .env}"
+      WEBUI_NAME: "${WEBUI_NAME:-Fitoway AI Platform}"
+      OLLAMA_BASE_URL: "http://ollama:11434"
+      ENABLE_SIGNUP: "${ENABLE_SIGNUP:-true}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - webui_data:/app/backend/data
+    networks:
+      - fitoway_internal
+
+  ollama:
+    image: ollama/ollama:${OLLAMA_TAG:-latest}
+    profiles: ["local"]
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - fitoway_internal
+
+networks:
+  fitoway_internal:
+    driver: bridge
+
+volumes:
+  webui_data:
+  ollama_data:
