@@ -19,6 +19,32 @@
 > [!IMPORTANT]
 > **Projeto independente de implantação e integração**, baseado no Open WebUI. Este repositório **não é o código-fonte oficial** nem contém, por enquanto, uma cópia auditada da configuração da VPS. Não publique senhas, tokens, bancos de dados, conversas ou volumes Docker.
 
+## 🚀 Instalação limpa para qualquer pessoa
+
+Este repositório agora contém um **Compose independente** na raiz, sem dependências da VPS Fitoway. O Docker baixa a imagem oficial do Open WebUI, cria uma rede própria e mantém os dados em volumes locais. A instalação não contém usuários, conversas, chaves ou configurações privadas.
+
+```bash
+git clone https://github.com/alemaodacapa/fitoway-ai-platform.git
+cd fitoway-ai-platform
+cp .env.example .env
+# Gere uma chave com: openssl rand -hex 32
+# Edite .env e substitua CHANGE_ME_GENERATE_WITH_OPENSSL pela chave gerada.
+docker compose up -d
+```
+
+Abra **http://localhost:3000** no computador que executa Docker. Para incluir Ollama e baixar um modelo:
+
+```bash
+docker compose --profile local up -d
+docker compose exec ollama ollama pull llama3.2
+```
+
+**Importante:** a configuração padrão só publica a interface em `127.0.0.1`. Para acesso remoto, configure HTTPS e autenticação antes de alterar esse endereço. Após criar o administrador, considere definir `ENABLE_SIGNUP=false` em `.env` e recriar o serviço.
+
+📘 **[Guia detalhado de instalação limpa](docs/clean-install.md)** · **[Compose independente](compose.yaml)** · **[Modelo de variáveis](.env.example)**
+
+> Este repositório fornece uma **distribuição via Docker**, não uma cópia integral do código-fonte do Open WebUI. O código upstream está disponível no [projeto oficial](https://github.com/open-webui/open-webui). O procedimento ainda não foi validado em teste ponta a ponta.
+
 ## 📑 Índice
 
 - [Sobre](#-sobre)
