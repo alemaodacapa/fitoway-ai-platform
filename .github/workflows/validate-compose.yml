@@ -1,0 +1,37 @@
+name: Validar Docker Compose
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'compose.yaml'
+      - '.env.example'
+      - '.github/workflows/validate-compose.yml'
+  pull_request:
+    paths:
+      - 'compose.yaml'
+      - '.env.example'
+      - '.github/workflows/validate-compose.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Verificar configuração
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Verificar sintaxe do Compose
+        shell: bash
+        run: |
+          cp .env.example .env
+          docker compose -f compose.yaml config --quiet
+
+      - name: Mostrar serviços configurados
+        run: docker compose -f compose.yaml config --services
